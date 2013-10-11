@@ -21,14 +21,17 @@ class Petrovich {
     private $middlename; //Шарыпов
     private $firstname; //Пётр
     private $lastname; //Александрович
-    private $gender; //Пол male/мужской female/женский
+    
+	public $gender; //Пол male/мужской female/женский
 
     /**
      * Конструтор класса Петрович
      * загружаем правила из файла rules.json
      */
-    function __construct() {
+    function __construct($gen = $this::GEN_ANDROGYNOUS) {
 
+        $this->gender = $gen;
+        
         $rules_path = __DIR__.'/rules.json';
 
         $rules_resourse = fopen($rules_path, 'r');
@@ -113,7 +116,7 @@ class Petrovich {
             foreach($names_arr as $arr_name) {
                 $result .= $this->findInRules($arr_name,$case,$type).'-';
             }
-            return substr($result,0,strlen($result)-1);
+            return mb_substr($result,0,mb_strlen($result)-1);
         } else {
             return $this->findInRules($name,$case,$type);
         }
@@ -130,13 +133,17 @@ class Petrovich {
     private function findInRules($name,$case,$type) {
         foreach($this->rules[$type]->suffixes as $rule) {
             foreach($rule->test as $last_char) {
-                $last_name_char = substr($name,strlen($name)-strlen($last_char),strlen($last_char));
+                $last_name_char = mb_substr($name,mb_strlen($name)-mb_strlen($last_char),mb_strlen($last_char));
                 if($last_char == $last_name_char) {
                     if($rule->mods[$case] == '.')
                         continue;
 
-                    if($this->gender == 'androgynous' || $this->gender == null)
-                        $this->gender = $rule->gender;
+                    if($this->gender == $this::GEN_ANDROGYNOUS || $this->gender == null)
+						switch($this->gender) {
+                            case 'male': $this->gender = $this::GEN_MALE;
+                            case 'female': $this->gender = $this::GEN_FEMALE;
+                            case 'androgynous': $this->gender = $this::GEN_ANDROGYNOUS;
+                        }
 
                     return $this->applyRule($rule->mods,$name,$case);
                 }
@@ -176,23 +183,8 @@ class Petrovich {
      * @return string
      */
     private function applyRule($mods,$name,$case) {
-        $result = substr($name,0,strlen($name)-substr_count($mods[$case],'-'));
+        $result = mb_substr($name,0,mb_strlen($name)-substr_count($mods[$case],'-'));
         $result .= str_replace('-','',$mods[$case]);
         return $result;
-    }
-
-    /**
-     * Возвращает пол который возможно был определён при поиске в правилах
-     * @return int
-     */
-    public function getGender() {
-        switch($this->gender) {
-            case 'male':
-                return $this::GEN_MALE;
-            case 'female':
-                return $this::GEN_FEMALE;
-            case 'androgynous':
-                return $this::GEN_ANDROGYNOUS;
-        }
     }
 }
