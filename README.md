@@ -1,4 +1,4 @@
-![Petrovich](petrovich.png)
+![Petrovich](https://raw.github.com/rocsci/petrovich/master/petrovich.png)
 
 Склонение падежей русских имён, фамилий и отчеств. Вы задаёте начальное имя
 в именительном падеже, а получаете в нужном вам.
