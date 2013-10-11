@@ -1,18 +1,26 @@
 ![Petrovich](https://raw.github.com/rocsci/petrovich/master/petrovich.png)
 
-Склонение падежей русских имён, фамилий и отчеств. Вы задаёте начальное имя
-в именительном падеже, а получаете в нужном вам.
+Склонение падежей русских имён, фамилий и отчеств. Вы задаёте начальное имя в именительном падеже, а получаете в нужном вам.
 
 Портированная версия https://github.com/rocsci/petrovich с ruby на php
 
-#Пример
-http://iguffi.ru/petrovich/
+Лицензия MIT
 
-#Установка
+## Пример
 
-Загрузить папку petrovich на сервер.
+https://github.com/parshikov/petrovich-php-example
 
-#Использование
+##Установка
+
+Для работы требуется PHP >= 5.3
+
+Загрузить файлы в папку с библиотеками на сервере.
+
+##Использование
+
+В библиотеку входит класс ```Petrovich``` и trait ```Trait_Petrovich```
+
+### Использование класса
 
 ```php
 require_once('petrovich/Petrovich.php');
@@ -20,12 +28,43 @@ require_once('petrovich/Petrovich.php');
 use petrovich\Petrovich;
 
 $petrovich = new Petrovich();
-$fio = explode(' ',$_REQUEST['fio']);// Баженов Михаил Александрович
+$fio = explode(' ',$_REQUEST['fio']);// Пушкин Александр Сергеевич
 
 echo '<br /><strong>Дательный (Кому? Чему?):</strong><br />';
 echo $petrovich->firstname($fio[1],Petrovich::CASE_GENITIVE).'<br />';
 echo $petrovich->middlename($fio[2],Petrovich::CASE_GENITIVE).'<br />';
 echo $petrovich->lastname($fio[0],Petrovich::CASE_GENITIVE).'<br />';
+```
+
+### Использование trait'а
+
+Trait содержит в себе
+* Свойства
+  * ```firstname```
+  * ```middlename```
+  * ```lastname```
+* Методы
+  * ```firstname($case)```
+  * ```middlename($case)```
+  * ```lastname($case)```
+
+```php
+require_once('lib/Petrovich.php');
+require_once('lib/trait/Petrovich.php');
+	
+class User {
+	use Trait_Petrovich;
+}
+
+$user = new User();
+
+$user->lastname = "Пушкин";
+$user->firstname = "Александр";
+$user->middlename = "Сергеевич";
+
+$user->firstname(Petrovich::CASE_GENITIVE);	// Пушкину
+$user->lastname(Petrovich::CASE_GENITIVE);	// Александру
+$user->middlename(Petrovich::CASE_GENITIVE);	// Сергеевичу
 ```
 
 ## Падежи
@@ -40,10 +79,8 @@ echo $petrovich->lastname($fio[0],Petrovich::CASE_GENITIVE).'<br />';
 | CASE_PREPOSITIONAL  | предложный   | О ком? О чём?          |
 
 ## Пол
-Метод ```Petrovich::gender()``` возвращает пол, которому, ВОЗМОЖНО, соответствует последнее запрошеное преобразование.
+Свойство ```Petrovich::$gender``` возвращает пол, которому, ВОЗМОЖНО, соответствует последнее запрошеное преобразование.
 Для полов определены следующие константы
-* GEN_ANDROGYNOUS
-* GEN_MALE
-* GEN_FEMALE
-
-Лицензия MIT
+* GEN_ANDROGYNOUS - пол не определен;
+* GEN_MALE - мужской пол;
+* GEN_FEMALE - женский пол.

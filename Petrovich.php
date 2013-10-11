@@ -1,9 +1,5 @@
 <?php
 
-namespace petrovich;
-
-use ErrorException;
-
 class Petrovich {
 
     private $rules; //Правила
