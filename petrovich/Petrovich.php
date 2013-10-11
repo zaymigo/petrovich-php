@@ -25,11 +25,11 @@ class Petrovich {
 
     /**
      * Конструтор класса Петрович
-     * загружаем правила из файла rules.yml
+     * загружаем правила из файла rules.json
      */
     function __construct() {
 
-        $rules_path = __DIR__.'/rules.js';
+        $rules_path = __DIR__.'/rules.json';
 
         $rules_resourse = fopen($rules_path, 'r');
 
