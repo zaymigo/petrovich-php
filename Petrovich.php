@@ -181,7 +181,7 @@ class Petrovich {
      * @return string
      */
     private function applyRule($mods,$name,$case) {
-        $result = mb_substr($name,0,mb_strlen($name)-substr_count($mods[$case],'-'));
+        $result = mb_substr($name,0,mb_strlen($name) - 2*substr_count($mods[$case],'-'));
         $result .= str_replace('-','',$mods[$case]);
         return $result;
     }
