@@ -28,9 +28,7 @@ class Petrovich {
      * Конструтор класса Петрович
      * загружаем правила из файла rules.json
      */
-    function __construct($gen = $this::GEN_ANDROGYNOUS) {
-
-        $this->gender = $gen;
+    function __construct() {
         
         $rules_path = __DIR__.'/rules.json';
 
