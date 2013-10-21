@@ -4,9 +4,9 @@ require_once 'Petrovich.php';
 
 trait Trait_Petrovich {
 
-    public $middlename; //Шарыпов
-    public $firstname; //Пётр
-    public $lastname; //Александрович
+    public $firstname; // Александр
+    public $middlename; // Сергеевич
+    public $lastname; // Пушкин
     
 	private $petrovich;
 
@@ -17,12 +17,13 @@ trait Trait_Petrovich {
      * @return bool|string
      * @throws \ErrorException
      */
-    public function firstname($case) {
+    public function firstname($case = Petrovich::CASE_NOMENATIVE) {
+        if ($case === Petrovich::CASE_NOMENATIVE) {
+            return $this->firstname;
+        }
+
         if (!isset($petrovich))
-            $this->petrovich = new petrovich();
-		
-        if(empty($this->firstname))
-            throw new ErrorException('Firstname cannot be empty.');
+            $this->petrovich = new Petrovich();
 
         return $this->petrovich->firstname($this->firstname,$case,__FUNCTION__);
     }
@@ -34,12 +35,13 @@ trait Trait_Petrovich {
      * @return bool|string
      * @throws \ErrorException
      */
-    public function middlename($case) {
+    public function middlename($case = Petrovich::CASE_NOMENATIVE) {
+        if ($case === Petrovich::CASE_NOMENATIVE) {
+            return $this->middlename;
+        }
+
 		if (!isset($petrovich))
-            $this->petrovich = new petrovich();
-			
-        if(empty($this->middlename))
-            throw new ErrorException('Middlename cannot be empty.');
+            $this->petrovich = new Petrovich();
 
         return $this->petrovich->middlename($this->middlename,$case,__FUNCTION__);
     }
@@ -51,12 +53,13 @@ trait Trait_Petrovich {
      * @return bool|string
      * @throws \ErrorException
      */
-    public function lastname($case) {
+    public function lastname($case = Petrovich::CASE_NOMENATIVE) {
+        if ($case === Petrovich::CASE_NOMENATIVE) {
+            return $this->firstname;
+        }
+
 		if (!isset($petrovich))
-            $this->petrovich = new petrovich();
-	
-        if(empty($this->lastname))
-            throw new ErrorException('Lastname cannot be empty.');
+            $this->petrovich = new Petrovich();
 
         return $this->petrovich->lastname($this->lastname,$case,__FUNCTION__);
     }

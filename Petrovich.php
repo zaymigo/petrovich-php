@@ -4,21 +4,22 @@ class Petrovich {
 
     private $rules; //Правила
 
+    const CASE_NOMENATIVE = -1; //именительный
     const CASE_GENITIVE = 0; //родительный
     const CASE_DATIVE = 1; //дательный
     const CASE_ACCUSATIVE = 2; //винительный
     const CASE_INSTRUMENTAL = 3; //творительный
     const CASE_PREPOSITIONAL = 4; //предложный
 
-    const GEN_ANDROGYNOUS = 0; // Пол не определен
-    const GEN_MALE = 1; // Мужской
-    const GEN_FEMALE = 2; // Женский
+    const GENDER_ANDROGYNOUS = 0; // Пол не определен
+    const GENDER_MALE = 1; // Мужской
+    const GENDER_FEMALE = 2; // Женский
 
     private $middlename; //Шарыпов
     private $firstname; //Пётр
     private $lastname; //Александрович
     
-	public $gender; //Пол male/мужской female/женский
+	public $gender = Petrovich::GENDER_ANDROGYNOUS; //Пол male/мужской female/женский
 
     /**
      * Конструтор класса Петрович
@@ -132,11 +133,11 @@ class Petrovich {
                     if($rule->mods[$case] == '.')
                         continue;
 
-                    if($this->gender == $this::GEN_ANDROGYNOUS || $this->gender == null)
+                    if($this->gender == $this::GENDER_ANDROGYNOUS || $this->gender == null)
 						switch($this->gender) {
-                            case 'male': $this->gender = $this::GEN_MALE;
-                            case 'female': $this->gender = $this::GEN_FEMALE;
-                            case 'androgynous': $this->gender = $this::GEN_ANDROGYNOUS;
+                            case 'male': $this->gender = $this::GENDER_MALE;
+                            case 'female': $this->gender = $this::GENDER_FEMALE;
+                            case 'androgynous': $this->gender = $this::GENDER_ANDROGYNOUS;
                         }
 
                     return $this->applyRule($rule->mods,$name,$case);
@@ -177,7 +178,7 @@ class Petrovich {
      * @return string
      */
     private function applyRule($mods,$name,$case) {
-        $result = mb_substr($name,0,mb_strlen($name) - 2*substr_count($mods[$case],'-'));
+        $result = mb_substr($name,0,mb_strlen($name) - 2 * substr_count($mods[$case],'-'));
         $result .= str_replace('-','',$mods[$case]);
         return $result;
     }
