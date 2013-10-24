@@ -14,31 +14,47 @@ class Petrovich {
     const GENDER_ANDROGYNOUS = 0; // Пол не определен
     const GENDER_MALE = 1; // Мужской
     const GENDER_FEMALE = 2; // Женский
-
-    private $middlename; //Шарыпов
-    private $firstname; //Пётр
-    private $lastname; //Александрович
     
-	public $gender = Petrovich::GENDER_ANDROGYNOUS; //Пол male/мужской female/женский
+	private $gender = Petrovich::GENDER_ANDROGYNOUS; //Пол male/мужской female/женский
 
     /**
      * Конструтор класса Петрович
      * загружаем правила из файла rules.json
      */
-    function __construct() {
+    function __construct($gender = Petrovich::GENDER_ANDROGYNOUS, $rules_dir = __DIR__) {
         
-        $rules_path = __DIR__.'/rules.json';
-
+        $rules_path = $rules_dir.'/rules.json';
         $rules_resourse = fopen($rules_path, 'r');
 
         if($rules_resourse == false)
-            throw new ErrorException('Rules file not found.');
+            throw new Exception('Rules file not found.');
 
         $rules_array = fread($rules_resourse,filesize($rules_path));
-
         fclose($rules_resourse);
 
         $this->rules = get_object_vars(json_decode($rules_array));
+
+        if (isset($gender) && $gender != Petrovich::GENDER_ANDROGYNOUS)
+            $this->gender = $gender;
+    }
+
+    /**
+    * Определяет пол по отчеству
+    * @param $middlename
+    * @return integer
+    * @throws Exception
+    */
+    public function detectGender($middlename)
+    {
+        if(empty($middlename))
+            throw new Exception('Middlename cannot be empty.');
+
+        switch ( mb_substr( mb_strtolower($middlename) , -2))
+        {
+            case 'ич': return Petrovich::GENDER_MALE; break;
+            case 'на': return Petrovich::GENDER_FEMALE; break;
+            default: return Petrovich::GENDER_ANDROGYNOUS; break;
+        }
     }
 
     /**
@@ -47,14 +63,17 @@ class Petrovich {
      * @param $firstname
      * @param $case
      * @return bool|string
-     * @throws \ErrorException
+     * @throws Exception
      */
-    public function firstname($firstname,$case) {
+    public function firstname($firstname, $case = Petrovich::CASE_NOMENATIVE) {
         if(empty($firstname))
-            throw new ErrorException('Firstname cannot be empty.');
+            throw new Exception('Firstname cannot be empty.');
 
-        $this->firstname = $firstname;
-        return $this->inflect($this->firstname,$case,__FUNCTION__);
+        if ($case === Petrovich::CASE_NOMENATIVE) {
+            return $firstname;
+        }
+
+        return $this->inflect($firstname,$case,__FUNCTION__);
     }
 
     /**
@@ -63,14 +82,17 @@ class Petrovich {
      * @param $middlename
      * @param $case
      * @return bool|string
-     * @throws \ErrorException
+     * @throws Exception
      */
-    public function middlename($middlename,$case) {
+    public function middlename($middlename, $case = Petrovich::CASE_NOMENATIVE) {
         if(empty($middlename))
-            throw new ErrorException('Middlename cannot be empty.');
+            throw new Exception('Middlename cannot be empty.');
 
-        $this->middlename = $middlename;
-        return $this->inflect($this->middlename,$case,__FUNCTION__);
+        if ($case === Petrovich::CASE_NOMENATIVE) {
+            return $middlename;
+        }
+
+        return $this->inflect($middlename,$case,__FUNCTION__);
     }
 
     /**
@@ -79,14 +101,17 @@ class Petrovich {
      * @param $lastname
      * @param $case
      * @return bool|string
-     * @throws \ErrorException
+     * @throws Exception
      */
-    public function lastname($lastname,$case) {
+    public function lastname($lastname, $case = Petrovich::CASE_NOMENATIVE) {
         if(empty($lastname))
-            throw new ErrorException('Lastname cannot be empty.');
+            throw new Exception('Lastname cannot be empty.');
 
-        $this->lastname = $lastname;
-        return $this->inflect($this->lastname,$case,__FUNCTION__);
+        if ($case === Petrovich::CASE_NOMENATIVE) {
+            return $lastname;
+        }
+
+        return $this->inflect($lastname,$case,__FUNCTION__);
     }
 
     /**
@@ -99,7 +124,6 @@ class Petrovich {
      * @return bool|string
      */
     private function inflect($name,$case,$type) {
-
         if(($exception = $this->checkException($name,$case,$type)) !== false)
             return $exception;
 
@@ -112,7 +136,8 @@ class Petrovich {
                 $result .= $this->findInRules($arr_name,$case,$type).'-';
             }
             return mb_substr($result,0,mb_strlen($result)-1);
-        } else {
+        }
+        else {
             return $this->findInRules($name,$case,$type);
         }
     }
@@ -127,13 +152,13 @@ class Petrovich {
      */
     private function findInRules($name,$case,$type) {
         foreach($this->rules[$type]->suffixes as $rule) {
+            if ( ! $this->checkGender($rule->gender) )
+                continue;
             foreach($rule->test as $last_char) {
                 $last_name_char = mb_substr($name,mb_strlen($name)-mb_strlen($last_char),mb_strlen($last_char));
                 if($last_char == $last_name_char) {
                     if($rule->mods[$case] == '.')
                         continue;
-
-                    $this->setGender($rule);
                     return $this->applyRule($rule->mods,$name,$case);
                 }
             }
@@ -156,8 +181,9 @@ class Petrovich {
         $lower_name = mb_strtolower($name);
 
         foreach($this->rules[$type]->exceptions as $rule) {
+            if ( ! $this->checkGender($rule->gender) )
+                continue;
             if(array_search($lower_name,$rule->test) !== false) {
-                $this->setGender($rule);
                 return $this->applyRule($rule->mods,$name,$case);
             }
         }
@@ -178,12 +204,25 @@ class Petrovich {
         return $result;
     }
 
-    private function setGender($rule) {
-        if($this->gender == $this::GENDER_ANDROGYNOUS || $this->gender == null)
-            switch($rule->gender) {
-                case 'male': $this->gender = $this::GENDER_MALE; break;
-                case 'female': $this->gender = $this::GENDER_FEMALE; break;
-                case 'androgynous': $this->gender = $this::GENDER_ANDROGYNOUS; break;
+    /**
+    * Преобразует строковое обозначение пола в числовое
+    * @param string
+    * @return integer
+    */
+    private function getGender($gender) {
+        switch($gender) {
+            case 'male': return Petrovich::GENDER_MALE; break;
+            case 'female': return Petrovich::GENDER_FEMALE; break;
+            case 'androgynous': return Petrovich::GENDER_ANDROGYNOUS; break;
         }
+    }
+
+    /**
+    * Проверяет переданный пол на соответствие установленному
+    * @param string
+    * @return bool
+    */
+    private function checkGender($gender) {
+        return $this->gender === $this->getGender($gender) || $this->gender === Petrovich::GENDER_ANDROGYNOUS;
     }
 }

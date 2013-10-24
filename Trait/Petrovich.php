@@ -6,9 +6,9 @@ trait Trait_Petrovich {
     public $middlename; // Сергеевич
     public $lastname; // Пушкин
     
+    public $gender;
+    
 	private $petrovich;
-
-    private $gender = Petrovich::GENDER_ANDROGYNOUS;
 
     /**
      * Задаём имя и слоняем его
@@ -23,9 +23,9 @@ trait Trait_Petrovich {
         }
 
         if (!isset($this->petrovich))
-            $this->petrovich = new Petrovich();
+            $this->petrovich = new Petrovich($this->gender);
 
-        return $this->petrovich->firstname($this->firstname,$case,__FUNCTION__);
+        return $this->petrovich->firstname($this->firstname,$case);
     }
 
     /**
@@ -41,9 +41,9 @@ trait Trait_Petrovich {
         }
 
         if (!isset($this->petrovich))
-            $this->petrovich = new Petrovich();
+            $this->petrovich = new Petrovich($this->gender);
 
-        return $this->petrovich->middlename($this->middlename,$case,__FUNCTION__);
+        return $this->petrovich->middlename($this->middlename,$case);
     }
 
     /**
@@ -59,22 +59,8 @@ trait Trait_Petrovich {
         }
 
         if (!isset($this->petrovich))
-            $this->petrovich = new Petrovich();
+            $this->petrovich = new Petrovich($this->gender);
 
-        return $this->petrovich->lastname($this->lastname,$case,__FUNCTION__);
-    }
-
-    /**
-     * Возвращает пол на основе последнего запроса
-     *
-     * @return integer
-     */
-    public function gender() {
-        if (!isset($this->petrovich))
-            $this->petrovich = new Petrovich();
-
-        $this->gender = $this->petrovich->gender;
-
-        return $this->gender;
+        return $this->petrovich->lastname($this->lastname,$case);
     }
 }
