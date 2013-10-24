@@ -133,13 +133,7 @@ class Petrovich {
                     if($rule->mods[$case] == '.')
                         continue;
 
-                    if($this->gender == $this::GENDER_ANDROGYNOUS || $this->gender == null)
-						switch($this->gender) {
-                            case 'male': $this->gender = $this::GENDER_MALE;
-                            case 'female': $this->gender = $this::GENDER_FEMALE;
-                            case 'androgynous': $this->gender = $this::GENDER_ANDROGYNOUS;
-                        }
-
+                    $this->setGender($rule);
                     return $this->applyRule($rule->mods,$name,$case);
                 }
             }
@@ -163,6 +157,7 @@ class Petrovich {
 
         foreach($this->rules[$type]->exceptions as $rule) {
             if(array_search($lower_name,$rule->test) !== false) {
+                $this->setGender($rule);
                 return $this->applyRule($rule->mods,$name,$case);
             }
         }
@@ -181,5 +176,14 @@ class Petrovich {
         $result = mb_substr($name,0,mb_strlen($name) - 2 * substr_count($mods[$case],'-'));
         $result .= str_replace('-','',$mods[$case]);
         return $result;
+    }
+
+    private function setGender($rule) {
+        if($this->gender == $this::GENDER_ANDROGYNOUS || $this->gender == null)
+            switch($rule->gender) {
+                case 'male': $this->gender = $this::GENDER_MALE; break;
+                case 'female': $this->gender = $this::GENDER_FEMALE; break;
+                case 'androgynous': $this->gender = $this::GENDER_ANDROGYNOUS; break;
+        }
     }
 }
