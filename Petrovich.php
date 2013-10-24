@@ -104,7 +104,7 @@ class Petrovich {
             return $exception;
 
         //если двойное имя или фамилия или отчество
-        if(substr_count($name,'-') > 0) {
+        if(mb_substr_count($name,'-') > 0) {
             $names_arr = explode('-',$name);
             $result = '';
 
@@ -153,7 +153,7 @@ class Petrovich {
         if(!isset($this->rules[$type]->exceptions))
             return false;
 
-        $lower_name = strtolower($name);
+        $lower_name = mb_strtolower($name);
 
         foreach($this->rules[$type]->exceptions as $rule) {
             if(array_search($lower_name,$rule->test) !== false) {
@@ -173,7 +173,7 @@ class Petrovich {
      * @return string
      */
     private function applyRule($mods,$name,$case) {
-        $result = mb_substr($name,0,mb_strlen($name) - 2 * substr_count($mods[$case],'-'));
+        $result = mb_substr($name,0,mb_strlen($name) - mb_substr_count($mods[$case],'-'));
         $result .= str_replace('-','',$mods[$case]);
         return $result;
     }

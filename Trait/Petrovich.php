@@ -1,7 +1,5 @@
  <?php
 
-require_once 'Petrovich.php';
-
 trait Trait_Petrovich {
 
     public $firstname; // Александр
@@ -24,7 +22,7 @@ trait Trait_Petrovich {
             return $this->firstname;
         }
 
-        if (!isset($petrovich))
+        if (!isset($this->petrovich))
             $this->petrovich = new Petrovich();
 
         return $this->petrovich->firstname($this->firstname,$case,__FUNCTION__);
@@ -42,7 +40,7 @@ trait Trait_Petrovich {
             return $this->middlename;
         }
 
-		if (!isset($petrovich))
+        if (!isset($this->petrovich))
             $this->petrovich = new Petrovich();
 
         return $this->petrovich->middlename($this->middlename,$case,__FUNCTION__);
@@ -60,7 +58,7 @@ trait Trait_Petrovich {
             return $this->firstname;
         }
 
-		if (!isset($petrovich))
+        if (!isset($this->petrovich))
             $this->petrovich = new Petrovich();
 
         return $this->petrovich->lastname($this->lastname,$case,__FUNCTION__);
@@ -72,7 +70,7 @@ trait Trait_Petrovich {
      * @return integer
      */
     public function gender() {
-        if (!isset($petrovich))
+        if (!isset($this->petrovich))
             $this->petrovich = new Petrovich();
 
         $this->gender = $this->petrovich->gender;
