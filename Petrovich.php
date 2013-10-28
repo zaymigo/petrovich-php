@@ -223,6 +223,6 @@ class Petrovich {
     * @return bool
     */
     private function checkGender($gender) {
-        return $this->gender === $this->getGender($gender) || $this->gender === Petrovich::GENDER_ANDROGYNOUS;
+        return $this->gender === $this->getGender($gender) || $this->getGender($gender) === Petrovich::GENDER_ANDROGYNOUS;
     }
 }
