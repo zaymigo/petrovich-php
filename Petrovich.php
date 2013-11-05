@@ -124,22 +124,18 @@ class Petrovich {
      * @return bool|string
      */
     private function inflect($name,$case,$type) {
-        if(($exception = $this->checkException($name,$case,$type)) !== false)
-            return $exception;
+        $names_arr = explode('-',$name);
+        $result = array();
 
-        //если двойное имя или фамилия или отчество
-        if(mb_substr_count($name,'-') > 0) {
-            $names_arr = explode('-',$name);
-            $result = '';
-
-            foreach($names_arr as $arr_name) {
-                $result .= $this->findInRules($arr_name,$case,$type).'-';
+        foreach($names_arr as $arr_name) {
+            if(($exception = $this->checkException($arr_name,$case,$type)) !== false) {
+                $result[] = $exception;
             }
-            return mb_substr($result,0,mb_strlen($result)-1);
+            else {
+                $result[] = $this->findInRules($arr_name,$case,$type);
+            }
         }
-        else {
-            return $this->findInRules($name,$case,$type);
-        }
+        return implode('-',$result);
     }
 
     /**
@@ -184,6 +180,8 @@ class Petrovich {
             if ( ! $this->checkGender($rule->gender) )
                 continue;
             if(array_search($lower_name,$rule->test) !== false) {
+                if($rule->mods[$case] == '.')
+                    return $name;
                 return $this->applyRule($rule->mods,$name,$case);
             }
         }
