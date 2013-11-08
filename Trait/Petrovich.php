@@ -55,7 +55,7 @@ trait Trait_Petrovich {
      */
     public function lastname($case = Petrovich::CASE_NOMENATIVE) {
         if ($case === Petrovich::CASE_NOMENATIVE) {
-            return $this->firstname;
+            return $this->lastname;
         }
 
         if (!isset($this->petrovich))
