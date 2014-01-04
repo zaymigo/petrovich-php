@@ -154,7 +154,7 @@ class Petrovich {
                 $last_name_char = mb_substr($name,mb_strlen($name)-mb_strlen($last_char),mb_strlen($last_char));
                 if($last_char == $last_name_char) {
                     if($rule->mods[$case] == '.')
-                        continue;
+                        return $name;
                     return $this->applyRule($rule->mods,$name,$case);
                 }
             }
