@@ -36,6 +36,8 @@ git submodule add --init https://github.com/petrovich/petrovich-php.git lib/petr
 ### Использование класса
 
 ```php
+mb_internal_encoding('UTF-8');
+
 require_once('path-to-lib/petrovich-php/Petrovich.php');
 
 $petrovich = new Petrovich(Petrovich::GENDER_MALE);
@@ -66,6 +68,8 @@ Trait содержит в себе
   * ```lastname($case)```
 
 ```php
+mb_internal_encoding('UTF-8');
+
 require_once('path-to-lib/petrovich-php/Petrovich.php');
 require_once('path-to-lib/petrovich-php/Trait/Petrovich.php');
 	
