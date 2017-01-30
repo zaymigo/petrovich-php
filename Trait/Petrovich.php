@@ -1,4 +1,4 @@
- <?php
+<?php
 
 trait Trait_Petrovich {
 
