@@ -1,6 +1,13 @@
 <?php
+namespace Zaymigo\Petrovich\PetrovichTrait;
 
-trait Trait_Petrovich {
+use Zaymigo\Petrovich\Petrovich;
+
+/**
+ * Trait PetrovichTrait
+ * @package Zaymigo\Petrovich\PetrovichTrait
+ */
+trait PetrovichTrait {
 
     public $firstname; // Александр
     public $middlename; // Сергеевич

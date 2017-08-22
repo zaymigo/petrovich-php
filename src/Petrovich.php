@@ -1,7 +1,14 @@
 <?php
+namespace Zaymigo\Petrovich;
 
+/**
+ * Class Petrovich
+ * @package Zaymigo\Petrovich
+ */
 class Petrovich {
-
+    /**
+     * @var array
+     */
     private $rules; //Правила
 
     const CASE_NOMENATIVE = -1; //именительный
@@ -14,20 +21,24 @@ class Petrovich {
     const GENDER_ANDROGYNOUS = 0; // Пол не определен
     const GENDER_MALE = 1; // Мужской
     const GENDER_FEMALE = 2; // Женский
-    
-	private $gender = Petrovich::GENDER_ANDROGYNOUS; //Пол male/мужской female/женский
+
+    /**
+     * @var int
+     */
+    private $gender = Petrovich::GENDER_ANDROGYNOUS; //Пол male/мужской female/женский
 
     /**
      * Конструтор класса Петрович
      * загружаем правила из файла rules.json
+     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
      */
-    function __construct($gender = Petrovich::GENDER_ANDROGYNOUS, $rules_dir = __DIR__) {
+    public function __construct($gender = Petrovich::GENDER_ANDROGYNOUS, $rules_dir = __DIR__) {
         
-        $rules_path = $rules_dir.'/rules/rules.json';
+        $rules_path = $rules_dir . '/../rules/rules.json';
         $rules_resourse = fopen($rules_path, 'r');
 
         if($rules_resourse == false)
-            throw new Exception('Rules file not found.');
+            throw new Exception\InvalidArgumentException('Rules file not found.');
 
         $rules_array = fread($rules_resourse,filesize($rules_path));
         fclose($rules_resourse);
@@ -39,15 +50,15 @@ class Petrovich {
     }
 
     /**
-    * Определяет пол по отчеству
-    * @param $middlename
-    * @return integer
-    * @throws Exception
-    */
+     * Определяет пол по отчеству
+     * @param $middlename
+     * @return integer
+     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
+     */
     public function detectGender($middlename)
     {
         if(empty($middlename))
-            throw new Exception('Middlename cannot be empty.');
+            throw new Exception\InvalidArgumentException('Middlename cannot be empty.');
 
         switch ( mb_substr( mb_strtolower($middlename) , -2))
         {
@@ -63,11 +74,11 @@ class Petrovich {
      * @param $firstname
      * @param $case
      * @return bool|string
-     * @throws Exception
+     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
      */
     public function firstname($firstname, $case = Petrovich::CASE_NOMENATIVE) {
         if(empty($firstname))
-            throw new Exception('Firstname cannot be empty.');
+            throw new Exception\InvalidArgumentException('Firstname cannot be empty.');
 
         if ($case === Petrovich::CASE_NOMENATIVE) {
             return $firstname;
@@ -82,11 +93,11 @@ class Petrovich {
      * @param $middlename
      * @param $case
      * @return bool|string
-     * @throws Exception
+     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
      */
     public function middlename($middlename, $case = Petrovich::CASE_NOMENATIVE) {
         if(empty($middlename))
-            throw new Exception('Middlename cannot be empty.');
+            throw new Exception\InvalidArgumentException('Middlename cannot be empty.');
 
         if ($case === Petrovich::CASE_NOMENATIVE) {
             return $middlename;
@@ -101,11 +112,11 @@ class Petrovich {
      * @param $lastname
      * @param $case
      * @return bool|string
-     * @throws Exception
+     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
      */
     public function lastname($lastname, $case = Petrovich::CASE_NOMENATIVE) {
         if(empty($lastname))
-            throw new Exception('Lastname cannot be empty.');
+            throw new Exception\InvalidArgumentException('Lastname cannot be empty.');
 
         if ($case === Petrovich::CASE_NOMENATIVE) {
             return $lastname;
