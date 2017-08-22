@@ -34,7 +34,7 @@ class Petrovich {
      */
     public function __construct($gender = Petrovich::GENDER_ANDROGYNOUS, $rules_dir = __DIR__) {
         
-        $rules_path = $rules_dir . '/../rules/rules.json';
+        $rules_path = $rules_dir . '/../resources/rules.json';
         $rules_resourse = fopen($rules_path, 'r');
 
         if($rules_resourse == false)
