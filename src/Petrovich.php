@@ -1,6 +1,8 @@
 <?php
 namespace Zaymigo\Petrovich;
 
+use Zaymigo\Petrovich\Exception\InvalidArgumentException;
+
 /**
  * Class Petrovich
  * @package Zaymigo\Petrovich
@@ -30,10 +32,11 @@ class Petrovich {
     /**
      * Конструтор класса Петрович
      * загружаем правила из файла rules.json
-     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
+     * @param int $gender
+     * @param string $rules_dir
      */
-    public function __construct($gender = Petrovich::GENDER_ANDROGYNOUS, $rules_dir = __DIR__) {
-        
+    public function __construct($gender = Petrovich::GENDER_ANDROGYNOUS, $rules_dir = __DIR__)
+    {
         $rules_path = $rules_dir . '/../resources/rules.json';
         $rules_resourse = fopen($rules_path, 'r');
 
@@ -53,7 +56,7 @@ class Petrovich {
      * Определяет пол по отчеству
      * @param $middlename
      * @return integer
-     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function detectGender($middlename)
     {
@@ -74,9 +77,10 @@ class Petrovich {
      * @param $firstname
      * @param $case
      * @return bool|string
-     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function firstname($firstname, $case = Petrovich::CASE_NOMENATIVE) {
+    public function firstname($firstname, $case = Petrovich::CASE_NOMENATIVE)
+    {
         if(empty($firstname))
             throw new Exception\InvalidArgumentException('Firstname cannot be empty.');
 
@@ -93,9 +97,10 @@ class Petrovich {
      * @param $middlename
      * @param $case
      * @return bool|string
-     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function middlename($middlename, $case = Petrovich::CASE_NOMENATIVE) {
+    public function middlename($middlename, $case = Petrovich::CASE_NOMENATIVE)
+    {
         if(empty($middlename))
             throw new Exception\InvalidArgumentException('Middlename cannot be empty.');
 
@@ -112,9 +117,10 @@ class Petrovich {
      * @param $lastname
      * @param $case
      * @return bool|string
-     * @throws \Zaymigo\Petrovich\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function lastname($lastname, $case = Petrovich::CASE_NOMENATIVE) {
+    public function lastname($lastname, $case = Petrovich::CASE_NOMENATIVE)
+    {
         if(empty($lastname))
             throw new Exception\InvalidArgumentException('Lastname cannot be empty.');
 
@@ -134,7 +140,8 @@ class Petrovich {
      * @param $type
      * @return bool|string
      */
-    private function inflect($name,$case,$type) {
+    private function inflect($name,$case,$type)
+    {
         $names_arr = explode('-',$name);
         $result = array();
 
@@ -157,7 +164,8 @@ class Petrovich {
      * @param $type
      * @return string
      */
-    private function findInRules($name,$case,$type) {
+    private function findInRules($name,$case,$type)
+    {
         foreach($this->rules[$type]->suffixes as $rule) {
             if ( ! $this->checkGender($rule->gender) )
                 continue;
@@ -181,7 +189,8 @@ class Petrovich {
      * @param $type
      * @return bool|string
      */
-    private function checkException($name,$case,$type) {
+    private function checkException($name,$case,$type)
+    {
         if(!isset($this->rules[$type]->exceptions))
             return false;
 
@@ -207,31 +216,49 @@ class Petrovich {
      * @param $case
      * @return string
      */
-    private function applyRule($mods,$name,$case) {
+    private function applyRule($mods,$name,$case)
+    {
         $result = mb_substr($name,0,mb_strlen($name) - mb_substr_count($mods[$case],'-'));
         $result .= str_replace('-','',$mods[$case]);
         return $result;
     }
 
     /**
-    * Преобразует строковое обозначение пола в числовое
-    * @param string
-    * @return integer
-    */
-    private function getGender($gender) {
+     * Преобразует строковое обозначение пола в числовое
+     * @param string
+     * @return integer
+     */
+    private function getGender($gender)
+    {
         switch($gender) {
             case 'male': return Petrovich::GENDER_MALE; break;
             case 'female': return Petrovich::GENDER_FEMALE; break;
             case 'androgynous': return Petrovich::GENDER_ANDROGYNOUS; break;
         }
+        throw new InvalidArgumentException("Неправильный пол");
     }
 
     /**
-    * Проверяет переданный пол на соответствие установленному
-    * @param string
-    * @return bool
-    */
-    private function checkGender($gender) {
+     * Проверяет переданный пол на соответствие установленному
+     * @param string
+     * @return bool
+     */
+    private function checkGender($gender)
+    {
         return $this->gender === $this->getGender($gender) || $this->getGender($gender) === Petrovich::GENDER_ANDROGYNOUS;
+    }
+
+    /**
+     * Задаёт пол
+     * @param $gender
+     * @return $this
+     */
+    public function setGender($gender)
+    {
+        if ($gender <= self::GENDER_FEMALE || $gender >= self::GENDER_ANDROGYNOUS) {
+            $this->gender = $gender;
+            return $this;
+        }
+        throw new InvalidArgumentException("Неправильно задан пол");
     }
 }
